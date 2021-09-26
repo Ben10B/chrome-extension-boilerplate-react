@@ -12,11 +12,28 @@
 }
 .product-info {
   display: flex;
+  flex-direction: column;
+}
+.main {
+  display: flex;
   flex-direction: row;
 }
+.main-image { position: relative;
+}
 .main-image img {
-  max-width: 250px;
+  width: 250px;
   height: auto;
+}
+.main-image .edit {
+  position: absolute;
+  z-index: 2;
+  bottom: 0; 
+  right: 0;
+  font-size: 18px;
+  padding: 0 5px 5px 0;
+  cursor: pointer;
+}
+.main-image .edit:hover { transform: scale(1.1); 
 }
 .main-details {
   display: flex;

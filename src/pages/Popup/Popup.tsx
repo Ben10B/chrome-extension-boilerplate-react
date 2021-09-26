@@ -24,9 +24,16 @@ const Popup = () => {
   useEffect(() => {
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
       if (msg.command === 'scrape-finished') setProduct(msg.data);
+      if (msg.command === 'change-image') setProduct(msg.data);
     });
     return () => {
       chrome.runtime.onMessage.removeListener((msg, sender, response) => { });
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        let activeTab = {
+          id: (typeof tabs[0].id === 'number') ? tabs[0].id : 0
+        };
+        chrome.tabs.sendMessage(activeTab.id, { command: "unhighlight-images" });
+      });
     }
   });
 
@@ -39,10 +46,6 @@ const Popup = () => {
       <div className="App">
         <ProductScrape product={product} tab={tab} />
         <div style={{ marginTop: '10px' }}>
-          <select>
-            <option value="">Add to List</option>
-            <option value="create">Create New List</option>
-          </select>
           <button>Save</button>
         </div>
       </div>

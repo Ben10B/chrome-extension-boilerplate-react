@@ -48,11 +48,30 @@ function scrapeImage() {
   }
 }
 
+function highlightImages(boxShadow) {
+  let productImages = document.body.getElementsByTagName('img');
+  for (let i = 0; i < productImages.length; i++) {
+    productImages.item(i).style.boxShadow = boxShadow;
+    if (boxShadow !== 'initial') productImages.item(i).addEventListener('mouseenter', changeImage);
+    else productImages.item(i).removeEventListener('mouseenter', changeImage);
+  }
+}
+function changeImage(e) {
+  window.ScrapeExt.image = e.target.src;
+  chrome.runtime.sendMessage({ command: 'change-image', data: window.ScrapeExt })
+}
+
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
   if (msg.command === "scrape") {
     scrapeImage();
     scrapeTitle();
     scrapePrice();
     chrome.runtime.sendMessage({ command: 'scrape-finished', data: window.ScrapeExt })
+  }
+  if (msg.command === 'highlight-images') {
+    highlightImages('0 0 10px 5px #000');
+  }
+  if (msg.command === 'unhighlight-images') {
+    highlightImages('initial');
   }
 });
