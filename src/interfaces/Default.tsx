@@ -9,5 +9,11 @@ export interface ProductPage {
   image: string;
   title: string;
   price: string;
-  details: string;
+  notes: string[];
+  list: string[];
+}
+
+export interface Product {
+  tab: ProductTab;
+  page: ProductPage;
 }

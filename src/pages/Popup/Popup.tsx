@@ -41,12 +41,16 @@ const Popup = () => {
     chrome.tabs.sendMessage(activeTab.id, { command: "scrape" });
   }, []);
 
+  const save = () => {
+    console.log(product)
+  }
+
   return (product && tab) ?
     (
       <div className="App">
         <ProductScrape product={product} tab={tab} />
         <div style={{ marginTop: '10px' }}>
-          <button>Save</button>
+          <button onClick={save}>Save</button>
         </div>
       </div>
     ) : <div className="App"><Loader /></div>

@@ -5,7 +5,7 @@ console.log('Must reload extension for modifications to take effect.');
 
 printLine("Using the 'printLine' function from the Print Module");
 window.ScrapeExt = {
-  title: '', price: '', image: ''
+  title: '', price: '', image: '', notes: [], list: []
 }
 function scrapePrice() {
   let prices = [
@@ -19,7 +19,7 @@ function scrapePrice() {
   if (document.body && prices.filter(x => x !== null)) {
     let _price = prices.filter(x => x !== null)[0];
     if (_price.children.length > 0) window.ScrapeExt.price = _price.children.item(0).innerText;
-    else window.ScrapeExt.price = _price.innerText;
+    else if (_price) window.ScrapeExt.price = _price.innerText;
     return;
   } window.requestAnimationFrame(scrapePrice);
 }
@@ -32,7 +32,7 @@ function scrapeTitle() {
   if (document.body && titles.filter(x => x !== null)) {
     let _title = titles.filter(x => x !== null)[0];
     if (_title.children.length > 0) window.ScrapeExt.title = _title.children.item(0).innerText;
-    else window.ScrapeExt.title = _title.innerText;
+    else if (_title) window.ScrapeExt.title = _title.innerText;
     return;
   } window.requestAnimationFrame(scrapeTitle);
 }
@@ -59,6 +59,9 @@ function changeImage(src) {
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
   if (msg.command === "scrape") {
+    scrapeTitle();
+    scrapePrice();
+    scrapeImage();
     chrome.runtime.sendMessage({ command: 'scrape-finished', data: window.ScrapeExt })
   }
   if (msg.command === 'select-image') {
