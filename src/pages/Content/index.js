@@ -5,7 +5,7 @@ console.log('Must reload extension for modifications to take effect.');
 
 printLine("Using the 'printLine' function from the Print Module");
 window.ScrapeExt = {
-  title: '', price: '', image: '', notes: [], list: []
+  title: '', price: '', image: '', notes: [], lists: []
 }
 function scrapePrice() {
   let prices = [
@@ -16,7 +16,7 @@ function scrapePrice() {
     document.body.querySelector('.price'),
     document.body.querySelector('#price'),
   ];
-  if (document.body && prices.filter(x => x !== null)) {
+  if (document.body && prices.filter(x => x !== null).length > 0) {
     let _price = prices.filter(x => x !== null)[0];
     if (_price.children.length > 0) window.ScrapeExt.price = _price.children.item(0).innerText;
     else if (_price) window.ScrapeExt.price = _price.innerText;

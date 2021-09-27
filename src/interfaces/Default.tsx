@@ -10,7 +10,7 @@ export interface ProductPage {
   title: string;
   price: string;
   notes: string[];
-  list: string[];
+  lists: string[];
 }
 
 export interface Product {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, createRef } from 'react';
 import '../pages/Popup/popup.css';
 import { ProductPage, ProductTab } from '../interfaces/Default';
 import React from 'react';
@@ -12,6 +12,11 @@ const ProductScrape = ({ product, tab }: ProductScrapeProps) => {
   const [messageMode, setMessageMode] = useState(false);
   const [note, setNote] = useState('');
   const [notes, setNotes] = useState<string[]>(product.notes);
+  const [list, setList] = useState('');
+  const [lists, setLists] = useState<string[]>(product.lists);
+  const noteInput = useRef<HTMLInputElement>(null);
+  const listInput = useRef<HTMLInputElement>(null);
+
   const toggleMessage = () => setMessageMode(!messageMode);
   const addNote = () => {
     let temp = notes;
@@ -19,6 +24,7 @@ const ProductScrape = ({ product, tab }: ProductScrapeProps) => {
       temp.push(note);
       setNotes(temp);
       setNote('');
+      noteInput.current?.focus();
     }
   };
   const delNote = (noteIndex: number) => {
@@ -30,7 +36,22 @@ const ProductScrape = ({ product, tab }: ProductScrapeProps) => {
     let temp = notes;
     temp[index] = value;
     setNotes(temp);
+  };
+  const addList = () => {
+    let temp = lists;
+    if (list !== '') {
+      temp.push(list);
+      setLists(temp);
+      setList('');
+      listInput.current?.focus();
+    }
   }
+  const delList = (listIndex: number) => {
+    let temp = lists;
+    temp = temp.filter((x, index) => index !== listIndex);
+    setLists(temp);
+  }
+
   return (
     <div className="product-info">
       <div className="main">
@@ -53,24 +74,31 @@ const ProductScrape = ({ product, tab }: ProductScrapeProps) => {
           <div className="input-wrapper">
             <label>Notes:</label>
             <ul className="notes">
-              <li>
-                <input type="text" value={note} onChange={(e) => setNote(e.target.value)} />
-                <button onClick={addNote}>Add</button>
-              </li>
               {notes.map((x, index) => (
                 <li key={index}>
                   <input type="text" defaultValue={x} onChange={(e) => onChangeNote(e.target.value, index)} />
                   <button onClick={() => delNote(index)}>Delete</button>
                 </li>
               ))}
+              <li>
+                <input type="text" value={note} onChange={(e) => setNote(e.target.value)} ref={noteInput} />
+                <button onClick={addNote}>Add</button>
+              </li>
             </ul>
           </div>
           <div className="input-wrapper">
             <label>Add to List:</label>
-            <select>
-              <option value=""></option>
-              <option value="create">Create New List</option>
-            </select>
+            <ul className="lists">
+              {lists.map((x, index) => (
+                <li className="list-item" key={index} value={x}>
+                  <span>{x}</span><span className="del" onClick={() => delList(index)}>✖</span>
+                </li>
+              ))}
+            </ul>
+            <div>
+              <input type="text" value={list} onChange={(e) => setList(e.target.value)} ref={listInput} />
+              <button onClick={addList}>Add</button>
+            </div>
           </div>
         </div>
       </div>
