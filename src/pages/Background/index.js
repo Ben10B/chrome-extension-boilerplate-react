@@ -1,28 +1,26 @@
 console.log('This is the background page.');
 console.log('Put the background scripts here.');
 
-// chrome.runtime.onMessage.addListener(receiver);
+const contextMenu = {
+  'select.image': {
+    contexts: ['image'],
+    title: 'Select image for product'
+  }
+};
 
-// function receiver(request, sender, sendResponse) {
-//   console.log(request)
-// }
-
-let color = '#3aa757';
-let site = "https://ibenjammin.com";
-let mainImageSrc = "";
-
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.sync.set({ color });
-  console.log('Default background color set to %cgreen', `color: ${color}`);
+chrome.runtime.onInstalled.addListener(function () {
+  for (const key of Object.keys(contextMenu)) {
+    chrome.contextMenus.create({
+      id: key,
+      type: 'normal',
+      title: contextMenu[key].title,
+      contexts: contextMenu[key].contexts
+    });
+  }
 });
 
-// chrome.action.onClicked.addListener((tab) => {
-//   chrome.scripting.executeScript({
-//     target: { tabId: tab.id },
-//     function: reddenPage
-//   });
-// });
-
-// function reddenPage() {
-//   document.body.style.backgroundColor = 'red';
-// }
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === 'select.image') {
+    chrome.tabs.sendMessage(tab.id, { command: 'select-image', data: info.srcUrl })
+  }
+});

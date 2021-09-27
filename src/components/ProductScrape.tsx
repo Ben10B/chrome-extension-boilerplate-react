@@ -10,22 +10,13 @@ interface ProductScrapeProps {
 
 const ProductScrape = ({ product, tab }: ProductScrapeProps) => {
   const [editMode, setEditMode] = useState(false);
-  const enterEditMode = () => {
-    setEditMode(true);
-    chrome.tabs.sendMessage(tab.id, { command: "highlight-images" });
-  };
-  const exitEditMode = () => {
-    setEditMode(false);
-    chrome.tabs.sendMessage(tab.id, { command: "unhighlight-images" });
-  };
-
+  const toggleEditMode = () => setEditMode(!editMode);
   return (
     <div className="product-info">
       <div className="main">
         <div className="main-image">
           <img src={product.image} alt={product.image} />
-          {editMode ? <span className="edit" onClick={exitEditMode}>✅</span> :
-            <span className="edit" onClick={enterEditMode}>🔁</span>}
+          <span className="edit" onClick={toggleEditMode}>❔</span>
         </div>
         <div className="main-details">
           <a className="favicon-url" href={tab.url} target="_blank">
@@ -53,7 +44,7 @@ const ProductScrape = ({ product, tab }: ProductScrapeProps) => {
         </div>
       </div>
       <div className="notes">
-        {editMode && <p className="">To change image, hover mouse over image then click the checkmark.</p>}
+        {editMode && <p className="">To change image, right-click preferred image then click 'Select image for product'.</p>}
       </div>
     </div>
   )

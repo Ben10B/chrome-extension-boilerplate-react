@@ -35,7 +35,7 @@ const Popup = () => {
         chrome.tabs.sendMessage(activeTab.id, { command: "unhighlight-images" });
       });
     }
-  });
+  }, [setProduct]);
 
   const scrape = useCallback((activeTab) => {
     chrome.tabs.sendMessage(activeTab.id, { command: "scrape" });

@@ -19,10 +19,11 @@ function scrapePrice() {
   if (document.body && prices.filter(x => x !== null)) {
     let _price = prices.filter(x => x !== null)[0];
     if (_price.children.length > 0) window.ScrapeExt.price = _price.children.item(0).innerText;
-    else window.ScrapeExt.price = _price.textContent;
-  }
+    else window.ScrapeExt.price = _price.innerText;
+    return;
+  } window.requestAnimationFrame(scrapePrice);
 }
-
+window.requestAnimationFrame(scrapePrice);
 function scrapeTitle() {
   let titles = [
     document.body.querySelector('#productTitle'), // amazon.com
@@ -31,10 +32,11 @@ function scrapeTitle() {
   if (document.body && titles.filter(x => x !== null)) {
     let _title = titles.filter(x => x !== null)[0];
     if (_title.children.length > 0) window.ScrapeExt.title = _title.children.item(0).innerText;
-    else window.ScrapeExt.title = _title.textContent;
-  }
+    else window.ScrapeExt.title = _title.innerText;
+    return;
+  } window.requestAnimationFrame(scrapeTitle);
 }
-
+window.requestAnimationFrame(scrapeTitle);
 function scrapeImage() {
   if (document.body && document.body.getElementsByTagName('img')) {
     let productImages = document.body.getElementsByTagName('img');
@@ -45,33 +47,21 @@ function scrapeImage() {
       }
     }
     window.ScrapeExt.image = mainImage.src;
-  }
+    return;
+  } window.requestAnimationFrame(scrapeImage);
 }
+window.requestAnimationFrame(scrapeImage);
 
-function highlightImages(boxShadow) {
-  let productImages = document.body.getElementsByTagName('img');
-  for (let i = 0; i < productImages.length; i++) {
-    productImages.item(i).style.boxShadow = boxShadow;
-    if (boxShadow !== 'initial') productImages.item(i).addEventListener('mouseenter', changeImage);
-    else productImages.item(i).removeEventListener('mouseenter', changeImage);
-  }
-}
-function changeImage(e) {
-  window.ScrapeExt.image = e.target.src;
+function changeImage(src) {
+  window.ScrapeExt.image = src;
   chrome.runtime.sendMessage({ command: 'change-image', data: window.ScrapeExt })
 }
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
   if (msg.command === "scrape") {
-    scrapeImage();
-    scrapeTitle();
-    scrapePrice();
     chrome.runtime.sendMessage({ command: 'scrape-finished', data: window.ScrapeExt })
   }
-  if (msg.command === 'highlight-images') {
-    highlightImages('0 0 10px 5px #000');
-  }
-  if (msg.command === 'unhighlight-images') {
-    highlightImages('initial');
+  if (msg.command === 'select-image') {
+    changeImage(msg.data);
   }
 });
